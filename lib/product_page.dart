@@ -1,24 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class Product {
-  final String name;
-  final double price;
+class CartModel extends ChangeNotifier {
+  final List<String> _items = [];
 
-  Product({required this.name, required this.price});
+  List<String> get items => _items;
+
+  void add(String item) {
+    _items.add(item);
+    notifyListeners();
+  }
 }
 
-class ProductPage extends StatefulWidget {
+class CartButton extends StatelessWidget {
+  final String product;
+
+  CartButton({required this.product});
+
   @override
-  _ProductPageState createState() => _ProductPageState();
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: Icon(Icons.add_shopping_cart),
+      onPressed: () {
+        Provider.of<CartModel>(context, listen: false).add(product);
+        final snackBar = SnackBar(content: Text('$product added to cart!'));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      },
+    );
+  }
 }
 
-class _ProductPageState extends State<ProductPage> {
-  List<Product> cartItems = [];
-
-  final List<Product> products = [
-    Product(name: 'Mi Ayam', price: 12.000),
-    Product(name: 'Bakso', price: 10.000),
-    Product(name: 'Mi Ayam + Bakso', price: 20.000),
+class ProductPage extends StatelessWidget {
+  final List<String> products = [
+    "Product 1",
+    "Product 2",
+    "Product 3",
+    "Product 4"
   ];
 
   @override
@@ -37,35 +54,11 @@ class _ProductPageState extends State<ProductPage> {
         itemCount: products.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text(products[index].name),
-            subtitle: Text('\Rp${products[index].price.toStringAsFixed(3)}'),
-            trailing: ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  cartItems.add(products[index]);
-                });
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('${products[index].name} added to cart')));
-              },
-              child: Text('Add to Cart'),
-            ),
+            title: Text(products[index]),
+            trailing: CartButton(product: products[index]),
           );
         },
       ),
-      floatingActionButton: cartItems.isNotEmpty
-          ? FloatingActionButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/cart', arguments: cartItems);
-              },
-              child: Icon(Icons.shopping_cart),
-            )
-          : null,
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: ProductPage(),
-  ));
 }

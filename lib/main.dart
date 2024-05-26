@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:praktikummobile/landing_page.dart';
-import 'package:praktikummobile/product_page.dart';
-import 'package:praktikummobile/cart_page.dart';
+import 'landing_page.dart';
+import 'product_page.dart';
+import 'cart_page.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(PraktikumMobileApp());
