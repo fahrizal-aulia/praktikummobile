@@ -1,41 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../cart_model.dart';
 
-class CartModel extends ChangeNotifier {
-  final List<String> _items = [];
-
-  List<String> get items => _items;
-
-  void add(String item) {
-    _items.add(item);
-    notifyListeners();
-  }
-}
-
-class CartButton extends StatelessWidget {
-  final String product;
-
-  CartButton({required this.product});
-
+class ProductPage extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      icon: Icon(Icons.add_shopping_cart),
-      onPressed: () {
-        Provider.of<CartModel>(context, listen: false).add(product);
-        final snackBar = SnackBar(content: Text('$product added to cart!'));
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      },
-    );
-  }
+  _ProductPageState createState() => _ProductPageState();
 }
 
-class ProductPage extends StatelessWidget {
-  final List<String> products = [
-    "Product 1",
-    "Product 2",
-    "Product 3",
-    "Product 4"
+class _ProductPageState extends State<ProductPage> {
+  final List<Product> products = [
+    Product(name: "Product 1", price: 10),
+    Product(name: "Product 2", price: 20),
+    Product(name: "Product 3", price: 30),
+    Product(name: "Product 4", price: 40),
   ];
 
   @override
@@ -53,11 +30,62 @@ class ProductPage extends StatelessWidget {
       body: ListView.builder(
         itemCount: products.length,
         itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(products[index]),
-            trailing: CartButton(product: products[index]),
-          );
+          return ProductListItem(product: products[index]);
         },
+      ),
+    );
+  }
+}
+
+class Product {
+  final String name;
+  final int price;
+  int quantity;
+
+  Product({required this.name, required this.price, this.quantity = 0});
+}
+
+class ProductListItem extends StatelessWidget {
+  final Product product;
+
+  ProductListItem({required this.product});
+
+  @override
+  Widget build(BuildContext context) {
+    final cart = Provider.of<CartModel>(context);
+
+    return ListTile(
+      title: Text(product.name),
+      subtitle: Text('\$${product.price}'),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            icon: Icon(Icons.remove),
+            onPressed: () {
+              cart.remove(product);
+            },
+          ),
+          Text(product.quantity.toString()),
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () {
+              cart.addToCart(product);
+            },
+          ),
+          ElevatedButton(
+            onPressed: () {
+              cart.addToCart(product);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('${product.name} added to cart!'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            },
+            child: Text('Add to Cart'),
+          ),
+        ],
       ),
     );
   }
