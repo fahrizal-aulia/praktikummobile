@@ -50,28 +50,38 @@ class CartPage extends StatelessWidget {
                                       Navigator.of(context).pop();
                                     },
                                   ),
-                                  // TextButton(
-                                  //   child: Text('Confirm'),
-                                  //   onPressed: () {
-                                  //     cart.removeFromCart(cart.cart[index]);
-                                  //     Navigator.of(context).pop();
-                                  //   },
-                                  // ),
-                                  ElevatedButton(
+                                  TextButton(
+                                    child: Text('Confirm'),
                                     onPressed: () {
+                                      String namaitem = cart.cart[index].name;
                                       cart.removeFromCart(cart.cart[index]);
                                       Navigator.of(context).pop();
+
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
                                         SnackBar(
-                                          content: Text(
-                                              '${cart.cart[index].name} Deleted cart!'),
+                                          content:
+                                              Text('$namaitem Deleted cart!'),
                                           duration: Duration(seconds: 2),
                                         ),
                                       );
                                     },
-                                    child: Text('Confirm'),
                                   ),
+                                  // ElevatedButton(
+                                  //   onPressed: () {
+                                  //     cart.removeFromCart(cart.cart[index]);
+                                  //     Navigator.of(context).pop();
+                                  //     ScaffoldMessenger.of(context)
+                                  //         .showSnackBar(
+                                  //       SnackBar(
+                                  //         content: Text(
+                                  //             '${cart.cart[index].name} Deleted cart!'),
+                                  //         duration: Duration(seconds: 2),
+                                  //       ),
+                                  //     );
+                                  //   },
+                                  //   child: Text('Confirm'),
+                                  // ),
                                 ],
                               );
                             },
